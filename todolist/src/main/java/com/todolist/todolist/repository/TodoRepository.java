@@ -15,7 +15,6 @@ public interface TodoRepository extends JpaRepository<TodoEntity, Long> {
 
     List<TodoEntity> findByConcludedAndTitleContaining(boolean concluded, String title);
 
-    @Override
     Page<TodoEntity> findAll(Pageable pageable);
 
     Page<TodoEntity> findByConcludedOrderByCreatedAtDesc(boolean concluded, Pageable pageable);

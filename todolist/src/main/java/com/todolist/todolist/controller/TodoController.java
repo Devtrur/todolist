@@ -28,7 +28,7 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public TodoResponseDTO findById(@PathVariable Long id) throws TodoNotFoundException {
+    public TodoResponseDTO findById(@PathVariable Long id) {
         return todoService.findById(id);
     }
 
@@ -39,8 +39,7 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public TodoResponseDTO update(@PathVariable Long id, @Valid @RequestBody TodoRequestDTO dto)
-            throws TodoNotFoundException {
+    public TodoResponseDTO update(@PathVariable Long id, @Valid @RequestBody TodoRequestDTO dto) {
         return todoService.update(id, dto);
     }
 
