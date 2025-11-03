@@ -6,25 +6,25 @@ import com.todolist.todolist.entity.TodoEntity;
 import com.todolist.todolist.exception.TodoNotFoundException;
 import com.todolist.todolist.repository.TodoRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TodoService {
 
-    @Autowired
-    private TodoRepository todoRepository;
+    private final TodoRepository todoRepository;
+    private final ModelMapper modelMapper;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    public TodoService(TodoRepository todoRepository, ModelMapper modelMapper) {
+        this.todoRepository = todoRepository;
+        this.modelMapper = modelMapper;
+    }
 
-    public List<TodoResponseDTO> listAll() {
-        return todoRepository.findAll().stream()
-                .map(entity -> modelMapper.map(entity, TodoResponseDTO.class))
-                .collect(Collectors.toList());
+    public Page<TodoResponseDTO> listAll(int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return todoRepository.findAll(pageable)
+                .map(entity -> modelMapper.map(entity, TodoResponseDTO.class));
     }
 
     public TodoResponseDTO findById(Long id) throws TodoNotFoundException {
@@ -55,9 +55,15 @@ public class TodoService {
         todoRepository.deleteById(id);
     }
 
-    public List<TodoResponseDTO> listByConcluded(boolean concluded) {
-        return todoRepository.findByConcludedOrderByCreatedAtDesc(concluded).stream()
-                .map(entity -> modelMapper.map(entity, TodoResponseDTO.class))
-                .collect(Collectors.toList());
+    public Page<TodoResponseDTO> listByConcluded(boolean concluded, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return todoRepository.findByConcludedOrderByCreatedAtDesc(concluded, pageable)
+                .map(entity -> modelMapper.map(entity, TodoResponseDTO.class));
+    }
+
+    public Page<TodoResponseDTO> listByConcludedAndTitle(boolean concluded, String title, int page, int size) {
+        PageRequest pageable = PageRequest.of(page, size);
+        return todoRepository.findByConcludedAndTitleContaining(concluded, title, pageable)
+                .map(entity -> modelMapper.map(entity, TodoResponseDTO.class));
     }
 }

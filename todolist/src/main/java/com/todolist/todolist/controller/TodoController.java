@@ -5,22 +5,26 @@ import com.todolist.todolist.dto.TodoResponseDTO;
 import com.todolist.todolist.exception.TodoNotFoundException;
 import com.todolist.todolist.service.TodoService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/todolist")
 public class TodoController {
 
-    @Autowired
-    private TodoService todoService;
+    private final TodoService todoService;
+
+    public TodoController(TodoService todoService) {
+        this.todoService = todoService;
+    }
 
     @GetMapping
-    public List<TodoResponseDTO> findAll() {
-        return todoService.listAll();
+    public Page<TodoResponseDTO> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return todoService.listAll(page, size);
     }
 
     @GetMapping("/{id}")
@@ -35,7 +39,8 @@ public class TodoController {
     }
 
     @PutMapping("/{id}")
-    public TodoResponseDTO update(@PathVariable Long id, @Valid @RequestBody TodoRequestDTO dto) throws TodoNotFoundException {
+    public TodoResponseDTO update(@PathVariable Long id, @Valid @RequestBody TodoRequestDTO dto)
+            throws TodoNotFoundException {
         return todoService.update(id, dto);
     }
 
@@ -46,7 +51,21 @@ public class TodoController {
     }
 
     @GetMapping("/concluded/{concluded}")
-    public List<TodoResponseDTO> listByConcluded(@PathVariable boolean concluded) {
-        return todoService.listByConcluded(concluded);
+    public Page<TodoResponseDTO> listByConcluded(
+            @PathVariable boolean concluded,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return todoService.listByConcluded(concluded, page, size);
+    }
+
+    @GetMapping("/search")
+    public Page<TodoResponseDTO> searchByConcludedAndTitle(
+            @RequestParam boolean concluded,
+            @RequestParam String title,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return todoService.listByConcludedAndTitle(concluded, title, page, size);
     }
 }
