@@ -38,12 +38,19 @@ Versionamento	Git & GitHub
 todolist/
 
 ├── config/         # Configurações (ModelMapper, etc.)
+
 ├── controller/     # Endpoints REST
+
 ├── dto/            # DTOs de Entrada e Saída
+
 ├── entity/         # Entidades JPA (Todo)
+
 ├── exception/      # Tratamento global de erros
+
 ├── repository/     # Repositórios (JpaRepository)
+
 ├── service/        # Regras de negócio
+
 └── TodolistApplication.java
  
 Como Executar/Pré-requisitos
